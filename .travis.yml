@@ -2,3 +2,10 @@ language: node_js
 node_js: node
 services:
 - mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: LMkp7WIkY0/AzL9hLYax8mhuKNW6zXzz8kgFREss2cGXjFFdZGiucTrANCKrRLQezHozJjBkXeytbvTkoRaX2KNqM7b3Hu6Kx4uFgjCPnBsaUjbvoSkc499qz0oH1OpbLF/011TPc2SrYD7BQziDbPnC4ci/ZfwXLyflK2o/1so9Nt0qMXuvE6hmyloO7QESMb7BJ58xfGMNXYH21WtV8wlOHMTdezo+TJIJT2RM8n0Y2HCBf9wt+JWKhxyFnFtb08lwJ+f5RIeRGl0kXatOFA4zXrJIXlaW8xt/k0PWfxuLb+wzKygRiheiPVM46u3QkU/e8msB22P0zZ7TfISm50mWeiodBoc6ZY4faKSDSbuE/qMS9urxC3m6YXsJsGPMTI4Ap7xRB/ctQ04lGGCjnQg/vzzMJCNEn/jEXDX4o2L9D/q+9HEX16oUvY+H/z5j+P6Q6cKaThiYsWsaEAnRXbDVgOZI+amHrlB0a1mQ9FRexb5Ag/9Jckt1w1h7TGcT8EQuEe8gNrYeRXEHMGRw/sV+GBfby4aNJcadbF7lF37cirdrKZvChiSDB3+ZV9nDvRHIsqnVR22lU/bit8wdp+k3pzNd1IsA4VcJbUFVxQIrsLv2DZA+N3zLyiIz9JeDIN6ykH3P+SSwlZMupOXNc3n3u6IcAfPQWQyqXtNoV2g=
+  app: pet-doc-finder-api
+  on:
+    repo: daxapps/PetDocFinderAPI
