@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 
-const {PORT, DATABASE_URL} = require('./config');
+const {DATABASE_URL, TEST_DATABASE_URL, PORT} = require('./config');
 
 mongoose.Promise = global.Promise;
 // assert.equal(query.exec().constructor, global.Promise);
@@ -13,9 +13,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.get('/api/*', (req, res) => {
-// res.json({ok: true});
-// });
+app.get('/api/*', (req, res) => {
+res.json({ok: true});
+});
  
 let server;
 
