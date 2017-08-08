@@ -1,93 +1,94 @@
-const express = require('express');
-const app = express();
-const mongoose = require('mongoose');
-const passport = require('passport');
-const bodyParser = require('body-parser');
-const LocalStrategy = require("passport-local");
-const passportLocalMongoose = require("passport-local-mongoose");
-const session = require('express-session');
+require("dotenv").config();
+const bodyParser = require("body-parser");
+const express = require("express");
+const mongoose = require("mongoose");
+const morgan = require("morgan");
+const passport = require("passport");
 
-const {DATABASE_URL, TEST_DATABASE_URL, PORT} = require('./config');
-const {User} = require('./models/user');
-const {routes} = require('./routes/index');
+const { router: usersRouter } = require("./users");
+const { router: authRouter, basicStrategy, jwtStrategy } = require("./auth");
 
 mongoose.Promise = global.Promise;
-// assert.equal(query.exec().constructor, global.Promise);
 
-app.use((req, res, next) => {
+const { PORT, DATABASE_URL } = require("./config");
+
+const app = express();
+
+// Logging
+app.use(morgan("common"));
+
+// CORS
+app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
+  if (req.method === "OPTIONS") {
+    return res.send(204);
+  }
   next();
 });
 
-// app.get('/api/*', (req, res) => {
-// res.json({ok: true});
-// });
-
-app.use(session({
-    secret: "asdgasgsafhsdhh",
-    resave: false,
-    saveUninitialized: false
-}));
 app.use(passport.initialize());
-app.use(passport.session());
-app.use(bodyParser.json());
+passport.use(basicStrategy);
+passport.use(jwtStrategy);
 
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+app.use("/api/users/", usersRouter);
+app.use("/api/auth/", authRouter);
 
-app.use(function(req, res, next){
-   res.locals.currentUser = req.user;
-   // res.locals.error = req.flash("error");
-   // res.locals.success = req.flash("success");
-   next();
+// A protected endpoint which needs a valid JWT to access it
+app.get(
+  "/api/protected",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    return res.json({
+      data: "rosebud"
+    });
+  }
+);
+
+app.use("*", (req, res) => {
+  return res.status(404).json({ message: "Not Found" });
 });
 
-app.use('/', routes);
-
+// Referenced by both runServer and closeServer. closeServer
+// assumes runServer has run and set `server` to a server object
 let server;
 
-
-function runServer(databaseUrl) {
-	const port = process.env.PORT || 8080;
-	const options = {
-		useMongoClient: true
-		}
-	return new Promise((resolve, reject) => {
-    mongoose.connect(databaseUrl, options, err => {
-      server = app.listen(port, () => {
-       console.log(`Your app is listening on port ${port}`);
-       resolve(server);
-     }).on('error', err => {
-      mongoose.disconnect();
-      reject(err)
+function runServer() {
+  return new Promise((resolve, reject) => {
+    mongoose.connect(DATABASE_URL, err => {
+      if (err) {
+        return reject(err);
+      }
+      server = app
+        .listen(PORT, () => {
+          console.log(`Your app is listening on port ${PORT}`);
+          resolve();
+        })
+        .on("error", err => {
+          mongoose.disconnect();
+          reject(err);
+        });
     });
-   });
   });
 }
 
 function closeServer() {
   return mongoose.disconnect().then(() => {
-     return new Promise((resolve, reject) => {
-       console.log('Closing server');
-       server.close(err => {
-           if (err) {
-               return reject(err);
-           }
-           resolve();
-       });
-     });
+    return new Promise((resolve, reject) => {
+      console.log("Closing server");
+      server.close(err => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
+    });
   });
 }
 
 if (require.main === module) {
   runServer().catch(err => console.error(err));
-};
+}
 
-// app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
-
-module.exports = {app, runServer, closeServer};
-
+module.exports = { app, runServer, closeServer };
