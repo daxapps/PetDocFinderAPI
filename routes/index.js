@@ -1,8 +1,8 @@
 const express = require('express');
 const passport = require('passport');
 const {User} = require('../models/user');
-const {Qna} = require('../models/qna');
-const middleware = require("../middleware/index");
+
+// const middleware = require("../middleware/index");
 const router = express.Router();
 const app = express();
 
@@ -21,10 +21,10 @@ router.post("/register", (req, res) => {
 			console.log(err);
 			return res.render("register");
 		}
-		passport.authenticate("local")(req, res, function(){
-      req.flash("success", "Welcome to Web Dev Interview Q&A's " + user.username);
-			res.redirect("/");
-		});
+		// passport.authenticate("local")(req, res, function(){
+  //     req.flash("success", "Welcome to Web Dev Interview Q&A's " + user.username);
+		// 	res.redirect("/");
+		// });
 	});
 });
 
@@ -42,7 +42,7 @@ router.post("/login", passport.authenticate("local", {
 
 router.get("/logout", (req, res) => {
     req.logout();
-   	req.flash("success", "Logged you out!");
+   	// req.flash("success", "Logged you out!");
     // TODO: remove id??
     res.redirect("/"); // retains :id, why??
 });

@@ -1,8 +1,15 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const passport = require('passport');
+const bodyParser = require('body-parser');
+const LocalStrategy = require("passport-local");
+const passportLocalMongoose = require("passport-local-mongoose");
+const session = require('express-session');
 
 const {DATABASE_URL, TEST_DATABASE_URL, PORT} = require('./config');
+const {User} = require('./models/user');
+const {routes} = require('./routes/index');
 
 mongoose.Promise = global.Promise;
 // assert.equal(query.exec().constructor, global.Promise);
@@ -13,10 +20,34 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/api/*', (req, res) => {
-res.json({ok: true});
+// app.get('/api/*', (req, res) => {
+// res.json({ok: true});
+// });
+
+app.use(session({
+    secret: "asdgasgsafhsdhh",
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(bodyParser.json());
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use(function(req, res, next){
+   res.locals.currentUser = req.user;
+   // res.locals.error = req.flash("error");
+   // res.locals.success = req.flash("success");
+   next();
 });
- 
+
+app.use('/', routes);
+
 let server;
 
 
