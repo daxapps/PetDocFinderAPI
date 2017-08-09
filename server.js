@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const passport = require("passport");
 
 const { router: usersRouter } = require("./users");
+const { router: vetsRouter } = require("./vets");
 const { router: authRouter, basicStrategy, jwtStrategy } = require("./auth");
 
 mongoose.Promise = global.Promise;
