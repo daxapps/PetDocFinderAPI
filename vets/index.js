@@ -1,4 +1,4 @@
-const {Vet, Services} = require('./models');
+const {Vet} = require('./models');
 const {router} = require('./router');
 
-module.exports = {Vet, Services, router};
+module.exports = {Vet, router};
