@@ -21,8 +21,8 @@ router.post("/vetlist", jsonParser, (req, res) => {
   Vet
     .findOneAndUpdate({googleDataId:newVet.googleDataId},newVet,{upsert:true})
     .then(
-      // vet => res.status(201).json(vet))
-      vet => res.status(201).redirect('/vets/vet/'+vet._id))
+      vet => res.status(201).json(vet))
+      // vet => res.status(201).redirect('/vets/vet/'+ vet._id))
     .catch(err => {
       console.error(err);
       res.status(500).json({message: 'Internal server error'});
