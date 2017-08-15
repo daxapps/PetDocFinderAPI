@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 
 const { Vet } = require("./models");
+const { Service }  = require("../services/models");
 
 const router = express.Router();
 
@@ -30,20 +31,38 @@ router.post("/vetlist", jsonParser, (req, res) => {
 });
 
 // why doesn't this work w/ Postman ?????
-router.get("/vetlist/:id", (req, res) => {
-  Vet.findById(req.params.id)
-    .exec()
-    // .then(() =>{
-    //   console.log(res);
-    //   res
-    // .render(__dirName+'components/vet')
-    // })
-    .then(vet => res.json(vet.apiRepr()))
+// router.get("/vetlist/:id", (req, res) => {
+//   Vet.findById(req.params.id)
+//     .exec()
+//     // .then(() =>{
+//     //   console.log(res);
+//     //   res
+//     // .render(__dirName+'components/vet')
+//     // })
+//     .then(vet => res.json(vet.apiRepr()))
+//     .catch(err => {
+//       console.error(err);
+//       res.status(500).json({ message: "Internal server error" });
+//     });
+// });
+
+router.post('/:id/services', jsonParser, (req, res) => {
+  console.log('SERVICETEST', req.body.service, req.body.price);
+  Service
+    .create({
+      // _creator:req.params.id, 
+      service:req.body.service, 
+      price:req.body.price
+    })
+    .then(service => res.status(201).json(service.apiRepr()))
+   //  .findOneAndUpdate({creator:newService.creator},newService,{upsert:true})
+    // .then(
+   //    services => res.status(201).json(services))
     .catch(err => {
       console.error(err);
-      res.status(500).json({ message: "Internal server error" });
-    });
-});
+      res.status(500).json({message: 'Internal server error'});
+      });
+})
 
 // router.get('/vetlist', (req, res) => {
 //   Vet
