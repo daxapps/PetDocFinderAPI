@@ -17,7 +17,7 @@ VetSchema.methods.apiRepr = function() {
   return {
     googleDataId: this.place_id,
     vetName: this.name,
-    // servicesRef: service._id
+    servicesRef: service._id
   };
 };
 
