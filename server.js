@@ -7,7 +7,7 @@ const passport = require("passport");
 
 const { router: usersRouter } = require("./users");
 const { router: vetsRouter } = require("./vets");
-const { router: servicesRouter } = require("./services");
+// const { router: servicesRouter } = require("./services");
 const { router: authRouter, basicStrategy, jwtStrategy } = require("./auth");
 
 mongoose.Promise = global.Promise;
@@ -38,7 +38,7 @@ passport.use(jwtStrategy);
 app.use("/api/users/", usersRouter);
 app.use("/api/auth/", authRouter);
 app.use("/api/vets/", vetsRouter);
-// app.use("/api/vets/", servicesRouter); // ????
+// app.use("/api/vets/:id/", servicesRouter); // ????
 
 // A protected endpoint which needs a valid JWT to access it
 app.get(
@@ -46,7 +46,7 @@ app.get(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     return res.json({
-      data: "rosebud" // put map here????
+      data: "rosebud" 
     });
   }
 );

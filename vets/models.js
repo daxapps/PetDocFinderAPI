@@ -13,11 +13,11 @@ const VetSchema = mongoose.Schema({
 });
 
 VetSchema.methods.apiRepr = function() {
-  console.log('PLACE_ID: ', this.place_id)
+  console.log('PLACE_ID: ', this)
   return {
-    googleDataId: this.place_id,
-    vetName: this.name,
-    servicesRef: service._id
+    googleDataId: this.googleDataId,
+    vetName: this.vetName,
+    servicesRef: this.servicesRef
   };
 };
 
