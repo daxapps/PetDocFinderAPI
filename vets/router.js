@@ -47,24 +47,6 @@ router.post('/:id/services', jsonParser, (req, res) => {
       });
 })
 
-// why doesn't this work w/ Postman ?????
-// router.get("/:id/services/:id", jsonParser, (req, res) => {
-//   Service.findById(req.params.id)
-//     .exec()
-//     // .then(() =>{
-//     //   console.log(res);
-//     //   res
-//     // .render(__dirName+'components/vet')
-//     // })
-//     .then(vet => res.json(service.apiRepr()))
-//     .catch(err => {
-//       console.error(err);
-//       res.status(500).json({ message: "Internal server error" });
-//     });
-// });
-
-
-
 router.get('/vetlist/:id', (req, res) => {
   Service
     .findById(req.params.id)
@@ -74,6 +56,7 @@ router.get('/vetlist/:id', (req, res) => {
         console.log(err)
       }
       console.log('VET: ', vet)
+      res.json(vet)
     })
     // .then(vet => res.json(vet.apiRepr()))
     // .catch(err => res.status(500).json({message: 'Internal server error' + err}));
