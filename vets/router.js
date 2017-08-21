@@ -14,6 +14,7 @@ router.post("/vetlist", jsonParser, (req, res) => {
   var googleDataId = req.body.googleDataId;
   var vetName = req.body.vetName;
   var servicesRef = req.body.servicesRef || [];
+  // var vetId = req.body.vetId
   console.log("DATAID: ", req.body.googleDataId);
   var newVet = {
     googleDataId: googleDataId,
@@ -32,8 +33,8 @@ router.post("/vetlist", jsonParser, (req, res) => {
     });
 });
 
-router.post('/:id/services', jsonParser, (req, res) => {
-  console.log('SERVICETEST', req.body.service, req.body.price);
+router.post('/:id/services', (req, res) => {
+  console.log('SERVICETEST', req, req.body);
   Service
     .create({
       _creator:req.params.id, 
@@ -52,6 +53,7 @@ router.post('/:id/services', jsonParser, (req, res) => {
 })
 
 router.get('/vetlist/:id', (req, res) => {
+
   Vet
     .findById(req.params.id)
     .populate("servicesRef")
