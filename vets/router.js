@@ -19,7 +19,7 @@ router.post("/vetlist", jsonParser, (req, res) => {
   var newVet = {
     googleDataId: googleDataId,
     vetName: vetName,
-    servicesRef: servicesRef
+    // servicesRef: servicesRef
   };
 
   Vet.findOneAndUpdate({ googleDataId: newVet.googleDataId }, newVet, {
