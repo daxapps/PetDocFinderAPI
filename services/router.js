@@ -26,10 +26,10 @@ const jsonParser = bodyParser.json();
 //       });
 // })
 
-router.get('/', (req, res) => {
-	console.log('TESTINGROUTE');
-	res.json({message: 'hello from router'});
-})
+// router.get('/', (req, res) => {
+// 	console.log('TESTINGROUTE');
+// 	res.json({message: 'hello from router'});
+// })
 
 
 // });

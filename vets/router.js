@@ -33,7 +33,7 @@ router.post("/vetlist", jsonParser, (req, res) => {
     });
 });
 
-router.post('/:id/services', (req, res) => {
+router.post('/:id/services', jsonParser, (req, res) => {
   console.log('SERVICETEST', req, req.body);
   Service
     .create({
