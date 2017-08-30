@@ -50,19 +50,21 @@ router.post("/vetlist", jsonParser, (req, res) => {
 
 router.post("/:id/services", jsonParser, (req, res) => {
   console.log("SERVICETEST", req, req.body);
+  let newService;
   Service.create({
     _creator: req.params.id,
     service: req.body.service,
     price: req.body.price
   })
-    .then(service =>
-      Vet.findOneAndUpdate(
+    .then(service => {
+      newService = service;
+      return Vet.findOneAndUpdate(
         { _id: req.params.id },
         { $push: { servicesRef: { _id: service._id } } },
         { safe: true, upsert: true }
-      )
-    )
-    .then(data => res.status(201).json(data.apiRepr()))
+      );
+    })
+    .then(data => res.status(201).json(newService))
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
