@@ -13,9 +13,9 @@ const jsonParser = bodyParser.json();
 router.post("/vetlist", jsonParser, (req, res) => {
   var googleDataId = req.body.googleDataId;
   var vetName = req.body.vetName;
-  var servicesRef = req.body.servicesRef || [];
+  var servicesRef = [];
   // var vetId = req.body.vetId
-  console.log("DATAID: ", req.body.googleDataId);
+  console.log("DATAID: ", req.body);
   var newVet = {
     googleDataId: googleDataId,
     vetName: vetName
@@ -27,12 +27,12 @@ router.post("/vetlist", jsonParser, (req, res) => {
     .then(vet => {
       console.log("VET: ", vet);
       if (vet) {
-        Vet.findByIdAndUpdate(vet._id, { $set: newVet }, { new: true })
-          .exec()
-          .then(vet => {
+        // Vet.findByIdAndUpdate(vet._id, { $set: newVet }, { new: true })
+        //   .exec()
+        //   .then(vet => {
             console.log("RESSTATUS: ", vet);
             return res.status(201).json(vet);
-          });
+          // });
       } else {
         Vet.create(newVet).then(vet => vet);
       }
