@@ -23,6 +23,7 @@ router.post("/vetlist", jsonParser, (req, res) => {
   };
 
   Vet.findOne({ googleDataId: googleDataId })
+    .populate("servicesRef")
     .exec()
     .then(vet => {
       console.log("VET: ", vet);
