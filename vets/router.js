@@ -67,16 +67,21 @@ router.post("/:id/services", jsonParser, (req, res) => {
 // Delete a service
 router.delete("/:id/services", (req, res) => {
   // remove service from service collection
-  console.log('REQID: ', req.params.id)
-  Service.findByIdAndRemove(req.params.id)
+  console.log("REQID: ", req.params.id);
+  Service.findById(req.params.id)
     // remove reference to service from vet collection
-    // .then(service => {
-    //   return Vet.findByIdAndRemove(
-    //     { _id: req.params.id },
-    //     { $pull: { servicesRef: { _id: service._id } } },
-    //     { safe: true, upsert: true }
-    //   );
-    // })
+    .then(service => {
+      console.log("CREATOR: ", service._creator, service._id);
+      const serviceCreator = service._creator,
+        serviceId = service._id;
+      service.remove();
+      return Vet.findByIdAndUpdate(
+        serviceCreator,
+        { $pull: { servicesRef: serviceId } },
+        { safe: true, upsert: true }
+      );
+    })
+    // .then(() => Service.findByIdAndRemove(req.params.id))
     .then(() => res.status(204).end())
     .catch(err => {
       console.error(err);
