@@ -64,6 +64,30 @@ router.post("/:id/services", jsonParser, (req, res) => {
     });
 });
 
+// Edit a service
+// call "edit" componenet???
+router.get("/:id/services/edit", (req, res) => {
+  Service.findById(req.params.id, (err, foundService) => {
+    res.render("edit", { service: foundService });
+  });
+});
+
+router.put("/:id/services", (req, res) => {
+  const service = req.body.service,
+    price = req.body.price;
+  Service.findByIdAndUpdate(req.params.id, {
+    $set: {
+      service: service,
+      price: price
+    }
+  })
+    .then(data => res.status(200).json())
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
+
 // Delete a service
 router.delete("/:id/services", (req, res) => {
   // remove service from service collection
