@@ -65,12 +65,24 @@ router.post("/:id/services", jsonParser, (req, res) => {
 });
 
 // Delete a service
-// /:id/services/:id ????
-router.delete("/:id/services"), (req, res) => {
+router.delete("/:id/services", (req, res) => {
+  // remove service from service collection
+  console.log('REQID: ', req.params.id)
   Service.findByIdAndRemove(req.params.id)
+    // remove reference to service from vet collection
+    // .then(service => {
+    //   return Vet.findByIdAndRemove(
+    //     { _id: req.params.id },
+    //     { $pull: { servicesRef: { _id: service._id } } },
+    //     { safe: true, upsert: true }
+    //   );
+    // })
     .then(() => res.status(204).end())
-    .catch(err => res.status(500).json({ message: "Internal server error" }));
-};
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
 
 // Get all services info for one vet
 router.get("/vetlist/:id", (req, res) => {
