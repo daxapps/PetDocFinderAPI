@@ -9,17 +9,16 @@ const router = express.Router();
 
 const jsonParser = bodyParser.json();
 
-// Post Vet info
+// Post Vet info from google
 router.post("/vetlist", jsonParser, (req, res) => {
   var googleDataId = req.body.googleDataId;
   var vetName = req.body.vetName;
   var servicesRef = [];
-  // var vetId = req.body.vetId
+
   console.log("DATAID: ", req.body);
   var newVet = {
     googleDataId: googleDataId,
     vetName: vetName
-    // servicesRef: servicesRef will reset to []
   };
 
   Vet.findOne({ googleDataId: googleDataId })
@@ -28,27 +27,19 @@ router.post("/vetlist", jsonParser, (req, res) => {
     .then(vet => {
       console.log("VET: ", vet);
       if (vet) {
-        // Vet.findByIdAndUpdate(vet._id, { $set: newVet }, { new: true })
-        //   .exec()
-        //   .then(vet => {
-            console.log("RESSTATUS: ", vet);
-            return res.status(201).json(vet);
-          // });
+        console.log("RESSTATUS: ", vet);
+        return res.status(201).json(vet);
       } else {
         Vet.create(newVet).then(vet => vet);
       }
     })
-    // .then(vet => {
-    //   console.log("RESSTATUS: ", vet);
-    //   return res.status(201).json(vet);
-    // })
-    // vet => res.status(201).redirect('/vets/vet/'+ vet._id))
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
     });
 });
 
+// Add service to vet
 router.post("/:id/services", jsonParser, (req, res) => {
   console.log("SERVICETEST", req, req.body);
   let newService;
@@ -58,6 +49,7 @@ router.post("/:id/services", jsonParser, (req, res) => {
     price: req.body.price
   })
     .then(service => {
+      // Connect vet collection to service collection
       newService = service;
       return Vet.findOneAndUpdate(
         { _id: req.params.id },
@@ -72,6 +64,32 @@ router.post("/:id/services", jsonParser, (req, res) => {
     });
 });
 
+// Delete a service
+router.delete("/:id/services", (req, res) => {
+  // remove service from service collection
+  console.log("REQID: ", req.params.id);
+  Service.findById(req.params.id)
+    // remove reference to service from vet collection
+    .then(service => {
+      console.log("CREATOR: ", service._creator, service._id);
+      const serviceCreator = service._creator,
+        serviceId = service._id;
+      service.remove();
+      return Vet.findByIdAndUpdate(
+        serviceCreator,
+        { $pull: { servicesRef: serviceId } },
+        { safe: true, upsert: true }
+      );
+    })
+    // .then(() => Service.findByIdAndRemove(req.params.id))
+    .then(() => res.status(204).end())
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
+
+// Get all services info for one vet
 router.get("/vetlist/:id", (req, res) => {
   Vet.findById(req.params.id).populate("servicesRef").exec(function(err, vet) {
     if (err) {
@@ -80,8 +98,6 @@ router.get("/vetlist/:id", (req, res) => {
     console.log("VET: ", vet);
     res.json(vet);
   });
-  // .then(vet => res.json(vet.apiRepr()))
-  // .catch(err => res.status(500).json({message: 'Internal server error' + err}));
 });
 
 module.exports = { router };
