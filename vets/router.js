@@ -27,10 +27,12 @@ router.post("/vetlist", jsonParser, (req, res) => {
     .then(vet => {
       console.log("VET: ", vet);
       if (vet) {
-        console.log("RESSTATUS: ", vet);
+        // console.log("RESSTATUS: ", vet);
         return res.status(201).json(vet);
       } else {
-        Vet.create(newVet).then(vet => vet);
+        Vet.create(newVet).then(vet => {
+          return res.status(201).json(vet);
+        });
       }
     })
     .catch(err => {
@@ -65,14 +67,8 @@ router.post("/:id/services", jsonParser, (req, res) => {
 });
 
 // Edit a service
-// call "edit" componenet???
-router.get("/:id/services/edit", (req, res) => {
-  Service.findById(req.params.id, (err, foundService) => {
-    res.render("edit", { service: foundService });
-  });
-});
-
-router.put("/:id/services", (req, res) => {
+router.put("/:id/services", jsonParser, (req, res) => {
+  console.log("REQBODY: ", req.body);
   const service = req.body.service,
     price = req.body.price;
   Service.findByIdAndUpdate(req.params.id, {
@@ -81,7 +77,7 @@ router.put("/:id/services", (req, res) => {
       price: price
     }
   })
-    .then(data => res.status(200).json())
+    .then(data => res.status(200).json(data))
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
