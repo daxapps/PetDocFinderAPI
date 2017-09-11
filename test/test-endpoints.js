@@ -47,19 +47,51 @@ describe('Vet endpoints', () => {
 	  });	
   });
 
-  describe('POST endpoint', () => {
+  describe('POST/PUT endpoint', () => {
+    let serviceId = ""
   	it('should post service', () => {
 	  	return chai.request(app)
 	  	.post('/api/vets/123456789012345678901234/services')
 	  	.send({service: 'Shampoo', price: '40.00'})
 	  	.then(res => {
-          expect(res).to.have.status(201);
+        serviceId = res.body._id
+        expect(res).to.have.status(201);
+        expect(res.body.service).to.be.equal('Shampoo')
 				})
 	  	.catch(err => {
 				if (err) console.log('Something went wrong: ' + err)
 			});
 	  });	
+    it('should edit service', () => {
+      return chai.request(app)
+        .put('/api/vets/' + serviceId +'/services')
+        .send({service: 'X', price: '99.00'})
+        .then(res => {
+          const resJson = res.body.json().then(() =>{}
+          console.log('RESBODYTEST: ', resJson)
+          expect(resJson.service).to.be.equal('X')
+          expect(resJson.price).to.be.equal('99.00') 
+          )
+      })
+        .catch(err => {
+        if (err) console.log('Something went wrong: ' + err)
+      });
+    })
   });
+
+  // describe('PUT endpoint', () => {
+  //   it('should edit service', () => {
+  //     return chai.request(app)
+  //     .post('/api/vets/123456789012345678901234/services')
+  //     .send({service: 'Shampoo', price: '40.00'})
+  //     .then(res => {
+  //         expect(res).to.have.status(201);
+  //       })
+  //     .catch(err => {
+  //       if (err) console.log('Something went wrong: ' + err)
+  //     });
+  //   }); 
+  // });
 	  
 
 });

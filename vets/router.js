@@ -48,7 +48,7 @@ router.post("/:id/services", jsonParser, (req, res) => {
     service: req.body.service,
     price: req.body.price
   });
-  
+
   let newService;
   Service.create({
     _creator: req.params.id,
@@ -73,7 +73,7 @@ router.post("/:id/services", jsonParser, (req, res) => {
 
 // Edit a service
 router.put("/:id/services", jsonParser, (req, res) => {
-  console.log("REQBODY: ", req.body);
+  console.log("REQBODY: ", req.body, req.params.id);
   const service = req.body.service,
     price = req.body.price;
   Service.findByIdAndUpdate(req.params.id, {
@@ -82,7 +82,7 @@ router.put("/:id/services", jsonParser, (req, res) => {
       price: price
     }
   })
-    .then(data => res.status(200).json(data))
+    .then(data => {console.log('--->',data); return res.status(200).json(data);})
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
