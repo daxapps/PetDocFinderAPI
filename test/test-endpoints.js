@@ -39,7 +39,21 @@ describe('Vet endpoints', () => {
 	  	.post('/api/vets/vetlist')
 	  	.send({googleDataId: '1254234623', vetName: 'Petsmart'})
 	  	.then(res => {
-          expect(res).to.have.status(302);
+          expect(res).to.have.status(201);
+				})
+	  	.catch(err => {
+				if (err) console.log('Something went wrong: ' + err)
+			});
+	  });	
+  });
+
+  describe('POST endpoint', () => {
+  	it('should post service', () => {
+	  	return chai.request(app)
+	  	.post('/api/vets/123456789012345678901234/services')
+	  	.send({service: 'Shampoo', price: '40.00'})
+	  	.then(res => {
+          expect(res).to.have.status(201);
 				})
 	  	.catch(err => {
 				if (err) console.log('Something went wrong: ' + err)

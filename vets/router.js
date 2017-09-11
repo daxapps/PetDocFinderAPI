@@ -43,7 +43,12 @@ router.post("/vetlist", jsonParser, (req, res) => {
 
 // Add service to vet
 router.post("/:id/services", jsonParser, (req, res) => {
-  console.log("SERVICETEST", req, req.body);
+  console.log("SERVICETEST", {
+    _creator: req.params.id,
+    service: req.body.service,
+    price: req.body.price
+  });
+  
   let newService;
   Service.create({
     _creator: req.params.id,
