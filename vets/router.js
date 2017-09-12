@@ -43,7 +43,12 @@ router.post("/vetlist", jsonParser, (req, res) => {
 
 // Add service to vet
 router.post("/:id/services", jsonParser, (req, res) => {
-  console.log("SERVICETEST", req, req.body);
+  console.log("SERVICETEST", {
+    _creator: req.params.id,
+    service: req.body.service,
+    price: req.body.price
+  });
+
   let newService;
   Service.create({
     _creator: req.params.id,
@@ -68,7 +73,7 @@ router.post("/:id/services", jsonParser, (req, res) => {
 
 // Edit a service
 router.put("/:id/services", jsonParser, (req, res) => {
-  console.log("REQBODY: ", req.body);
+  console.log("REQBODY: ", req.body.service, req.params.id);
   const service = req.body.service,
     price = req.body.price;
   Service.findByIdAndUpdate(req.params.id, {
@@ -76,8 +81,10 @@ router.put("/:id/services", jsonParser, (req, res) => {
       service: service,
       price: price
     }
-  })
-    .then(data => res.status(200).json(data))
+  }, {new: true})
+    .then(data => {console.log('--->',data); 
+      return res.status(200).json(data);
+    })
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: "Internal server error" });
