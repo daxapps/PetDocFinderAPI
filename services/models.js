@@ -9,7 +9,7 @@ const ServiceSchema = mongoose.Schema({
     ref: "Vet" 
     },
   service: String,
-  price: String // or Number????
+  price: String
 });
 
 ServiceSchema.methods.apiRepr = function() {

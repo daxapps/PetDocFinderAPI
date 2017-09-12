@@ -14,8 +14,6 @@ router.post("/vetlist", jsonParser, (req, res) => {
   var googleDataId = req.body.googleDataId;
   var vetName = req.body.vetName;
   var servicesRef = [];
-
-  console.log("DATAID: ", req.body);
   var newVet = {
     googleDataId: googleDataId,
     vetName: vetName
@@ -27,7 +25,6 @@ router.post("/vetlist", jsonParser, (req, res) => {
     .then(vet => {
       console.log("VET: ", vet);
       if (vet) {
-        // console.log("RESSTATUS: ", vet);
         return res.status(201).json(vet);
       } else {
         Vet.create(newVet).then(vet => {
@@ -43,12 +40,6 @@ router.post("/vetlist", jsonParser, (req, res) => {
 
 // Add service to vet
 router.post("/:id/services", jsonParser, (req, res) => {
-  console.log("SERVICETEST", {
-    _creator: req.params.id,
-    service: req.body.service,
-    price: req.body.price
-  });
-
   let newService;
   Service.create({
     _creator: req.params.id,
@@ -73,7 +64,6 @@ router.post("/:id/services", jsonParser, (req, res) => {
 
 // Edit a service
 router.put("/:id/services", jsonParser, (req, res) => {
-  console.log("REQBODY: ", req.body.service, req.params.id);
   const service = req.body.service,
     price = req.body.price;
   Service.findByIdAndUpdate(req.params.id, {
@@ -87,18 +77,16 @@ router.put("/:id/services", jsonParser, (req, res) => {
     })
     .catch(err => {
       console.error(err);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: "Internal server error"
+      });
     });
 });
 
 // Delete a service
 router.delete("/:id/services", (req, res) => {
-  // remove service from service collection
-  console.log("REQID: ", req.params.id);
   Service.findById(req.params.id)
     // remove reference to service from vet collection
     .then(service => {
-      console.log("CREATOR: ", service._creator, service._id);
       const serviceCreator = service._creator,
         serviceId = service._id;
       service.remove();
@@ -108,7 +96,6 @@ router.delete("/:id/services", (req, res) => {
         { safe: true, upsert: true }
       );
     })
-    // .then(() => Service.findByIdAndRemove(req.params.id))
     .then(() => res.status(204).end())
     .catch(err => {
       console.error(err);
