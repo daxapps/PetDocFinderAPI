@@ -63,21 +63,23 @@ describe('Vet endpoints', () => {
 			});
 	  });	
     it('should edit service', () => {
+      let editService = {service:'x',price:'99.00'}
+          // editService = JSON.stringify(editService);
       return chai.request(app)
         .put('/api/vets/' + serviceId +'/services')
-        .send({service: 'X', price: '99.00'})
-        .then(res => {
-          const resJson = res.body.json().then(() =>{}
-          console.log('RESBODYTEST: ', resJson)
-          expect(resJson.service).to.be.equal('X')
-          expect(resJson.price).to.be.equal('99.00') 
-          )
-      })
+        .send(editService)
+        .then(function(res) {
+          const resJson = res.body;
+            console.log('RESBODYTEST: ', resJson, typeof(resJson))
+            expect(resJson.service).to.be.equal('x')
+            expect(resJson.price).to.be.equal('99.00')
+              
+        })
         .catch(err => {
         if (err) console.log('Something went wrong: ' + err)
-      });
-    })
-  });
+        });
+      })
+    });
 
   // describe('PUT endpoint', () => {
   //   it('should edit service', () => {
